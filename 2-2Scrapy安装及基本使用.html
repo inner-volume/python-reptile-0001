@@ -1,0 +1,461 @@
+<!DOCTYPE html><html><head><title>Scrapy安装及基本使用</title><meta charset='utf-8'><link href='https://dn-maxiang.qbox.me/res-min/themes/marxico.css' rel='stylesheet'><style>.note-content  {font-family: 'Helvetica Neue', Arial, 'Hiragino Sans GB', STHeiti, 'Microsoft YaHei', 'WenQuanYi Micro Hei', SimSun, Song, sans-serif;width:800px;margin:0 auto;}</style></head><body><div id='preview-contents' class='note-content'>
+                        
+                    
+
+
+
+<h2 id="爬虫工程师进阶二初窥scrapy">Scrapy安装及基本使用</h2>
+<p><a href="http://class.pkbigdata.com/#/classDetail/classIntroduce/17" target="_blank" style="color:darkblue;background-color:lightblue">Python爬虫（入门+进阶）</a>&nbsp &nbsp &nbsp<a href="https://class.pkbigdata.com" target="_blank" style="color:darkblue;background-color:lightblue">DC学院</a></p>
+
+<p>本节课主要介绍如何安装Scrapy，以及Scrapy的基本使用方法。</p>
+
+
+
+<h3 id="scrapy的安装">Scrapy的安装</h3>
+
+
+
+<h4 id="1-windows下安装流程">1. Windows下安装流程：</h4>
+
+<p><strong>方法一：</strong> 命令行执行pip install scrapy 安装scrapy</p>
+
+<p><code>注意：如果有miniconda，也可以打开“Anaconda prompt”，激活环境以后使用命令：conda install scrapy</code></p>
+
+<p><strong>方法二：</strong>当遇到lxml报错信息，可以进入非官方安装包下载对应版本的lxml.whl文件。其它依赖包缺失错误，或者不兼容错误，也可以下载对应的.whl文件，使用pip install 文件地址+文件名的方式安装 </p>
+
+
+
+<h4 id="2-mac系统安装流程">2. Mac系统安装流程：</h4>
+
+<p>可以直接使用pip install scrapy进行安装  <br>
+如果没有安装pip，可是使用以下命令行语句先安装pip：</p>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="hljs dsconfig"><div class="hljs-line"><span class="hljs-string">curl </span><span class="hljs-string">https:</span>//<span class="hljs-string">bootstrap.</span><span class="hljs-string">pypa.</span><span class="hljs-string">io/</span><span class="hljs-built_in">get-pip.py</span> | <span class="hljs-string">python3</span>
+</div></code></pre>
+
+
+
+<h3 id="scrapy爬虫的使用">Scrapy爬虫的使用</h3>
+
+<p>一个基本的爬虫只需要两部分组成：Spider（爬虫）、Pipeline（管道）。</p>
+
+
+
+<h4 id="spider是什么">Spider是什么？</h4>
+
+<p><strong><code>Spider</code></strong>类定义了如何爬取某个(或某些)网站，包括了爬取的动作(例如:是否跟进链接)以及如何从网页的内容中提取结构化数据(爬取item)。 换句话说，Spider就是定义爬取的动作及分析某个网页(或者是有些网页)的地方。</p>
+
+
+
+<h4 id="管道是什么">管道是什么？</h4>
+
+<p>每个<strong><code>项目管道</code></strong>组件是一个实现简单方法的Python类。他们接收一个项目并对其执行操作，还决定该项目是否应该继续通过流水线或被丢弃并且不再被处理。</p>
+
+
+
+<h4 id="管道的作用">管道的作用</h4>
+
+<p>Item管道的主要责任是负责处理有蜘蛛从网页中抽取的Item，它的主要任务是清洗、验证和存储数据。当页面被蜘蛛解析后，将被发送到Item管道，并经过几个特定的次序处理数据。</p>
+
+<blockquote>
+  <p>项目管道的典型用途是：</p>
+  
+  <ul><li>清理HTML数据</li>
+  <li>验证抓取的数据（检查项目是否包含特定字段）</li>
+  <li>检查重复（并删除）</li>
+  <li>将刮取的项目存储在数据库中</li>
+  </ul>
+</blockquote>
+
+
+
+<h3 id="第一个scrapy项目">第一个Scrapy项目</h3>
+
+<ol><li rel="1"><p>在命令行输入<code>scrapy startproject city_58</code>，建立Scrapy项目，提示如图即成功。<img longdesc="./1510732509938.png" alt="Alt text" title="" type="image/png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAx4AAACUCAYAAAAd+f8dAAAgAElEQVR4Ae2dAZLjuI5EazbmYP/ofbPZwMZm/2wMKIKSbEn264gKkmAiAT65qqR2e+avn5+ff374AwEIQAACEIAABCAAAQhA4IUE/ueF3lh/AYFfv379xBd//ksAJv9l8aQZ1+1JV+v6Xnm9XH8N6AACrybwKd/ndzrH39FM/PnPf/7zx/Ubxf8QvXGhflQy96s442cT0OvgzOv/Cs/ZVXh3TdUb9ZV5Zn3edx9ptzSuZ75O4M6M1ZtOdcbrQJ5neKmvPeNd+ljt/al9V+fcOov2qryIrb5+5DfL6+q8rz05nv/k+d6zd/O6umAorXjOrrV01SivmcfZuqqXM2LdPo/W+lsGUXAGT9p3j4Lhde/cr/f56fO7vmau5P50Jt/6/fb063bla/4ba/N6+carvu/M/jOVe5d9DK/K+pTv8zud4/b/1Mq/YQOcw/O9q16U1IXAkwjoeyiPOoN/T0lT7SnGCIH8OoEIBN5NQK/BPK72Efnxx38OVh5dnXupN49V3sT+S6DLuasLZ78O/6302lm3v67utd2+3v33Ox5RKr7ZdPBR6fwNmfXa78ZHdbbi2du1qq9Y1mo/4ppLG6PrZ/uhlyb7uU/WeT3P9/hs7nmaR85WXdfJf6Qf7SuevbLPK3Re0+ej2uphNnbyvV74VTkdTeS6zufuqbjHPDfHZ2dc3Xf/mKufyse11f6ZMfWRa87i6iHnRVy5HU1mUfl1PVVvNnp/Pq9q+374Zo32/Ryau7bSVX6z3n1fnh7zmoq7zuczbeRXGvl2xlm98HDNqKY00Y/mXj/3mTV5X7kdnWt8Xnn6fnUW7c/O4Tr1GuMo7prZvOp7lnOX/er8Yhl7OpvrNI8zaN/P4/uKV7rYy9q9OvlEvuaj/nLdbs0tv9h79x8/Z9QenUN9uX6mVc7R0WuOeuxoItd1Pq/O4vujultnW3rHIxfLzW4V2rvnh67qu2+1X8WO9N31G+m83zPmuU5eq8Yorv0YK00V85yteZV7JLZV65V73Z5f2cNZ3nEW/8q++n7zM2uuvZxz17X69v6qmO/P5jk/ryO/G5vVWt1fqetazTV63RzLa9fumR/xq3KrWLevnJvXXR/XdTwqzZGY19+ad2uER6Xd8n7ynn7Ozc7c1a2wyDXzeuRV6c6ORe3smdddzco5upy7ulHtI/HMIa/Du9tfV1fVqGJHzlXlVjVGsYjnr/D8/Y5HHFYCHdyLurH2FYtRMc85a67ewm9US72ERr0oNspxbdWrfHwvvEZ+0nfquufR+UpdaXNN9RxxaRSrzps1e/1Uo1M3akqv+rnu2WvV6/YXOs+p+rniHFUf6jWzVH9+jqwZ+d0lrt5z3xGPL49rrpzZGbLe/dxjSzer4fvhI195+n7MtR9zaRSLUTHlZU9pte+jcqWp/Fw/msvH98Mr++XeXK+5eom1fBXLfsrZGpVb+eW8XC/vV2vl5L2tun6Ori78X8lvdI58rnevnY8YjHqQ9q5nUV/qM0bFRmcLjeuU63rF9uicpXpZ9XMP78vj4en9+d675/mcs/pZ/8pziL1qqreKnzTKkTaPoZNGOVmj/YhLo1iMiuW8vF56x8OL5Xk2jnU0oqaq/ZVYHEiH2vKUJryV4zGvOYpLo/591F4e3cvnWXf22mv5vKoz248c1/i88uvE3MPnOdf3Yq6vrLtqfff+ZlzE00fl5O+nvA5dFVP+ncfct86/t+f8Ohj5dHWj/L3xs+ue6RfXIn/tPafyzuwvPM/2y57qO4/dulkXa49l39nac31e5c32q5ynxnTW/PMjn6ery3mjtfxi3+euz99DWz26R8z15X65lue8UrfnHFtn9XPMdPlcR9fOzOfZV3uz/rq67BN5ys21z1x7DZ97DfWSx9D8fscjFiGIg+TDuNnWnuteNfceY773zyz36nPuPdcob3beUd7R+KdxPMrjTvn6XvKe/HrpNaNYjIp5zh3nfjb1rz6fcgb1uzLms67kvlL7qr5e5XsWi+5r7VPOcRa3VZ8u5/Bd0a72MdKfdX3P8hn1+a74p5zjXbxynXgNi6FGad7x+s41Vbs7Lr/j0TX2xnzeze/oXuXrteMi+pfvMYfApxLwH14+f9J5/fvWz/COnxtP4vTOXkfX5J09UAsCHQL6mTH7edHVdWp2NZ/yfbRyji7nrq7L+mxdt7+ZLvb9S33OXq/SXTn+8Y5HNBIHmTUuIO9o3Hvp1A29dKu5R84zqps9u7qcN1rf3S/61vUYnSHio3N0crd8z9q7qr9R3dVzhY/+iKnHtKfxrLryO3uc9aez6axRP+aKn91P9pv1l/Vnrv3MR32vPEe39085b+cco+vRya14jvwqbSd2tl+n5hM0+foEp3f8GV2Pqh/FzuhtVPcdZ76ixrvPq2ukaxZnjrni72DgtVfr/fXr169/1LSSvXk397i0nVzPcz/32Jp7vuuyV0cnTc5135hLl+NaK39LJ41yVrTKGY1dL+lyL5WvtHlvK1c5lUZ7M7+uLnwqbVU71zyyrmqGX67b1XXPMfKranfON/I7co5OXWlUP9fTfneUT6V375HONeHR0UkzyvW4tLP+qv1RrPL0mnvOIc/w8fmWV+wdqTs6X8ezo6n6G9XMcTHI8ew50nl/0nis8o2YtHk/53Z1I889fqqZc3Ovo5rSdfKlXRlX+pPvak5XX+mqWPSR43k96lU67efROY+0rvFeOl6jXI+P6oa/dFsa1+WeYq1ceVWaLZ3yc1726+hGmvDOfrmecvfqlJ99s19XFz6V9ohf7k3r8p9a5UISV/Ec01pj5GquUX7dsco7EuvUrfy38rI+ryM3x/J6y3+0lz3yepRXxavcKlblVrEq90gsalT5Ve0zY1XNKrZSs5OfNXm9Ui+0Vf6R2Gr9s/S557xWnSpexaQ/a8w18npPnY5HpaliK/Vzfl53vVbzOvpKU8X29njEq1szdFWdI7GRZ+6pWyPnjdbZL69HecT7BFaYVtojsW6XuUZeh08V6/rfUZfPk9ev6LmqUcVWanfyK00V26r718/Pz/+947ElYm9MQE+Iq+DluDd/b57qnjXepY+zznN3n6fzjv73fq/c/dps9fe06/a0frfYs3cdgU95HXXP0dVdd0U+o3KXc1d3FZVuf13dVedYrfuvz3isGqD/XgL6ZvheAteffHYN7nSTH73eqZ93Xb3ZNXpXH9SBAAQgAAEIXE2AB483XoHRDcjTbsbyOZ7W/xsv+aFSmbPMnsr7qX2Le3f8tOvWPTe67ybwya/77s+uru67XynHT9/l3NUd72ifQ7e/rm5fF+/P4sHj/cz/qPj0F9TT+//jYjxgkXnn9QOO8JUtcp2+8rJ//aF53X/9SwAAEPgXAT7j8S8kBCAAAQhAAAIQgAAEIACBswmU/1Wrs4vgBwEIQAACEIAABCAAAQh8NwEePL77+nN6CEAAAhCAAAQgAAEIvIUADx5vwUwRCEDgCQTiA7KjD8k+oX96vB8BXlP3uyZ0BAEIXEfgsg+X65f70z981j1HV3fdS+Gayl0uXZ1OsapX3jtG9aZaZ3wPyPMML/W1NXbrdXVbtT55b4XPivaTmfnZXs3k1f5+FuYQgAAEvoHAZQ8e3wCXM0IAAs8i8K4Ht2dRodsjBHhNHaFHLgQg8GkE+KdWB6+ofqnob8ZGdl3dKP9T410uXd0TOMVZdJ4n9Fv1qP553Vd0iEEAAhCAAAQgUBH4WzcOcSOheQh1Y+FJvq94pYu9rB3p5OM5WZu9Qps18snad+lU/6zxrHPIJzho7j06n9l+5EmT/dwn67ye53v8zLlqeB8xzz3m/UojLz+v5u5X6Sq/iHX/yNP1XlNx1/l8po38ShNx99nSqYejo+pFP5pXdbWXdaqfzyP9aF/xK3Re0+f5DOpxFNf+K0bvK/xzD9qPuObex0gvTd6PeMcn6zyn41lpsudIo95no/cU2spPmtjTfKSd1WMfAhCAwBMI/H7Hw3/oReN5PTpMpevG3FM51Q9n12kuvdYxXhVTz1V976+rq3yOxEZsvLfRvKpb+Y10I1+Pd7l0de69Na96rmLh4XHNNXqNHMtr1+6ZH/Grco/Eutejq8ucq7WYVX1rT2OlqWLSz8Yq90hsVu/q/e7Zos9Km/uvNFUs53X9q7xRblU3x/J65H9GPNfK6zNq4AEBCEDgDgT++vXr1z9qpLpBUEyaPOoHpHRah64TC41ypM81qnXO0bpbt6vLPalON557H+VLN9rPca2755B/7lvx0ag6ytO6W1d58ld+N648jaN87Wuc6bQfevWyFQuN9vM8PLQ381N/nqP6vjeaq07OGcXlo/1YK3crJk3O78aVp1G1cn7ej7U0yhnFPC4fjbNc1ZBeo/LyvuKh096R2Kye9q8a95zN2eS+u345T2vli/0snvdjrVx57YnJd2VUPdX3XO3NeqlyKj/XMYcABCBwRwK/P1zuP8Ri7j8Q1XgV014es1/e11qerteeRmm03hrdZ3SOyO/qonbWVvVVK+uztqvLPt6De3rc567RfLb/Cs6qPRujt6ifz53zurqcN1o7E3mPtJ34mX4r16PTW2i6/eXr4HleS8yy3jWqG5qOTrny1jqPo55c55qZn+eN5l2/rBv53T2+cg7Xjs7lmpjH6yH/qWJZs7ru1A3Prm61/kx/Vd1ZX+xDAAIQOJvA7wePmfErfhmopv/QVUzjq+rOfKMnaTSqp61+pdk7vqrurOd8xr39Py3vrud+VV8z31e9/s5+Xcxez2fXk9+Mn3TfNnavx4zfbH8v11f57u3nSF6X9ZEa5EIAAhB4FYH2g4cayD/0zviBLo/srZox5j3luObs+ahm1M576jH2RvvqL3K3dNk7tPFn5iv/I+Oo9hHPbu6Mi3y6OumfPF5xPUY1R6+/7vXo6p58vej9HAKj1+A57rhAAAIQgMBVBH4/ePhNhW50jzQ18su/ULQOvefsre0eMd/6o9qVRrmuibniVc4ZMfl364ZeWuVGH4qd0VPlMaqbtV1dznvn+kxWTz+vXkPOJOaKv/q6nM3vbL84v7MZ8RjV7eSOPK+Iv+IcVzHo1B2d9wr21IQABCDwiQT++HB5PqD/oI4fyFt/OtpK042Nalf5lbajc014jM6cdbme8vbqlJ99s19HJ03Ozd7S5bjWyt/SSaOcFa1yYlRe9nPNTCcPz8l+lSb0rpMmYqO59+L1NHe/La3rVEseeXTtyLOjidy9utyTes5+HZ1yszb3J92sRuRJmz23cpVTabQ38+vqRj1WtXPNrbXqn+WTa7nvSi1pO35Zo7XXjljl2dFEbldXadXP1lj1lr2kGfWS45E/ytnqhT0IQAACdyHw+z+nm3/AzdZbB8i5oa1i2UMa/WDt5slH+aP1VjznjmpXOvmeNVY1jsQ6fVX+W3lZn9eRm2N5veV/dK9Tq9JUsZVecn5ed71W8zr6SnMk1j3Lii73k9dHvCL3HX5VjSp2tJ8VFnu0Vc9VrOtd5eZYXs+8O/pK04lVmlk/7EMAAhCAwDaB3+94fOoPWT3EvPt83bpd3fZlfN/u0X67+WfrXk2o2++r+7jav8sh6/L6qnPcpY+j549zvPtn3tGeyYcABCAAgc8n8Psdj088qm4iPvFsnAkCEDiXwKf8vOCh49zXBW4QgAAEIHAegd8fLj/P8jqn0Y3DFX/z163Z1V1HdX/lI9ejy6Wr238KMlcIdK9HV7dSe682v07v1NueMz29/z1nJgcCEIAABJ5B4KPf8YhLwC/he70QuR73uh508ycBXp9/8mAFAQhAAAIQOJPAXz8/P/+caYgXBCAAAQhAAAIQgAAEIACBTODj3/HIB2YNAQhAAAIQgAAEIAABCLyfAA8e72dORQhAAAIQgAAEIAABCHwdAR48vu6Sf8+B40PD+YPD33N6TgoBCEAAAhCAAATuReD2/1Wr2Y3j6odB5bea967L9or+5Kkz3Ons6u2qnt5dX/V0LfKYOWR93s/5rCEAAQhAAAIQgMBdCfCOx12vDH0dJhA36U++Uc8PHQGkih0GhQEEIAABCEAAAhB4A4Hbv+MhBmfdQIZP3LzF11me6vGuo855x5vWb7we8TrRNRm9ZvxaSavYN712R3yIQwACEIAABCDwPAKPefB4N1rd5OmmT/Vncem28uQhbYxZ73vSu8Zjms983LOau4/2vaZiMWbtUZ17b807dTuafAbP8bMo7jHPzfGt3vfsuX/M1c8eL3IgAAEIQAACEIDAlQS+8p9a6WburJu4yqeKxYUexUcvAunVc9ZpX/G8VnzvWPmdHdPZKl/vu9qvYp5z13n07V+5z4qJzqq9nMMaAhCAAAQgAAEI3JnAY97x0E2XYG7dfEm7pZHP0VG1wkf1FItRsVxnFHedfGZa7Uu/Vdf981w+Hg8v91ON0Eiv2B6d19qaq8asbrU/8o3+5auzjLSvjjs71VJ/6jHiV/ep3hghAAEIQAACEIDAKoHHPHisHmym95u62c2cbvy2dL4n71EPrh1pOjUj171mdUe1FFdNrbfGXHekzbpRDfUe+56TfX3P51l313XVs5jksyvuZ8ka32MOAQhAAAIQgAAE7kzgMQ8e1Q3bCOyKduTxqvhKbyvao/1WN7lHPSP/Vb5n9HYXj7jOmZOv9TpQLEbF7nIG+oAABCAAAQhAAAIzAl/5GQ9B0c2bbugU99H3fO6aV82j3rtrBhP/etXZKt/O9ajyPjkmJnFGn3/ymTkbBCAAAQhAAAKfSeCrHzzOvKT+gODzvTV08x/5W36+5/O9dbt5Xivm+qrydRYfK10ntlK349fV5LrdvKwTp65fV5frsIYABCAAAQhAAAJ3I/DXz8/PP3dryvvRjdfK3/au5lR6xaIX1a5ise9x7115rvGYazWXl+u2Ysrz0XMjrnzXxNx1I41yOlrXdOvK30f1stdP+e4Z8+wXsUqbdZVG3lmr+NY48steXd1WLfYgAAEIQAACEIDAXQjwjsfgSugmUGPINNeo1Lx2rTRHRvlXN6Lak39eKz4bV/Iq7ZHYrDftd2tI3xkrz5yXNXmd9bN1lX8kNqvHPgQgAAEIQAACELgDgdu/4/EuSLqpr24A39XDSp2n9btyttDe/Xx372+VN3oIQAACEIAABCDwagKP+a9avRoE/hA4QkAPIiOPpzzQjvonDgEIQAACEIAABI4S4MHj/wlyY3j0pXRu/p2ux+ih4k49nksfNwhAAAIQgAAEIHA+AR48zmeK4xcQyA8def0FCDgiBCAAAQhAAAIQWCLAZzyWcCGGAAQgAAEIQAACEIAABPYQ4L9qtYcaORCAAAQgAAEIQAACEIDAEgEePJZwIYYABCAAAQhAAAIQgAAE9hDgwWMPNXIgAAEIQAACEIAABCAAgSUCPHgs4UIMAQhAAAIQgAAEIAABCOwhwIPHHmrkQAACEIAABCAAAQhAAAJLBHjwWMKFGAIQgAAEIAABCEAAAhDYQ4AHjz3UyIEABCAAAQhAAAIQgAAElgjw4LGECzEEIAABCEAAAhCAAAQgsIcADx57qJEDAQhAAAIQgAAEIAABCCwR4MFjCRdiCEAAAhCAAAQgAAEIQGAPAR489lAjBwIQgAAEIAABCEAAAhBYIsCDxxIuxBCAAAQgAAEIQAACEIDAHgI8eOyhRg4EIAABCEAAAhCAAAQgsESAB48lXIghAAEIQAACEIAABCAAgT0EePDYQ40cCEAAAhCAAAQgAAEIQGCJAA8eS7gQQwACEIAABCAAAQhAAAJ7CPDgsYcaORCAAAQgAAEIQAACEIDAEgEePJZwIYYABCAAAQhAAAIQgAAE9hDgwWMPNXIgAAEIQAACEIAABCAAgSUCPHgs4UIMAQhAAAIQgAAEIAABCOwhwIPHHmrkQAACEIAABCAAAQhAAAJLBHjwWMKFGAIQgAAEIAABCEAAAhDYQ4AHjz3UyPlKAr9+/fqJL/78SeDbuHzbef+82qwgAAEIQAAC+wn8rRup//znP3+4jOJ/iFgsE7iK61V1lwFdkCA2Xjp/P/jeO+fq7S79nHX2Tz2X+MzON9uXDyMEIAABCEDgkwj8/UmH4SwQWCWgG8BO3qfd/HfO3NF8G5dvO2/nNYAGAhCAAAQg0CHAg0eHEpqPJ8DN5MdfYg4IAQhAAAIQgMDFBJYfPPLfEOcbNu13493zy1f67B/xrIlY1kkTcc0rnep0R/ca+bnG56MevfZIk8+hHNd7LZ+7RnmzUfk5dxaX72qe9O6vuTxjlM5jZ81zvaqWNLGnudfPOVmT9yPXNT6vtF5ra+4+octe2o+45pUuYr4/0kQ8/rg21/x/yb90Echa+eT+5JH1io9G93NNFVdMulEt1/m8ox9pVJMRAhCAAAQg8GQCSx8u91+iOnQV095ZY1WjilX1Rrocz+vKaxSrcqvYKL8TH/mN4h3PV2uq3qrYSh9H81UrfNxLa43SrY7uOcqtNFVslL83XtWoYuGf43m90kPOzWt5VfEqVvUnj6eN+Xx5/bTz0C8EIAABCEBgi8Df8Tds8csuvvS3bfrlp3UYKBZzxRXz3K1ie/ZUo1NXfXmdyB/1J71qjHTul+fKlZf2I579QjPSKy/G7BWxym+Wo/1uXenPGHXO8NJ5FItRsb21juav1FUt9d/JVU7WyiPvRzxzCc1In31n65FPVVde6lG5MSoWGs21rzwffW9Lv6XLdd1fnh571Vy1vNeqVuikUU6lU0wa5YzOq33plc8IAQhAAAIQeAqB//unVvpFqV9s0fzol5vHlfeOw+a6VU3vv9r3WPZbyXUfzSM/e2pvdVztxeuu1nq13nuL+erZqv7cs9rvxOShfrTu5M40Ha8zXy+zfny/W9fPEHNxcq+Vedevq4varl3pZaTVGc/2HdXLZ4i66mErhz0IQAACEIDAUwn8/oyH/9J75y/es8Bd9QvbueUe9nDMHjM+e2rMPO+8f/fzzvqLfV1jjeI9y5Vuz3hV3dVeM5NR/itZjWpeHf/GM1/NnPoQgAAEIHAugd8PHufaXueWfzl3b2SOdDyqGbXzXrdOznvHObq9oTtGYHRtj7xeOh1dVbfT29Ua//7y+dV9UR8CEIAABCDwSQSWPlweB/dfyj7PUHzP51nXXbtHzPXVzX+Vruoj3+C9qvaVvvl6jHo5Wzeq85T4Va+X1brd69blvuIX3z/5q1sHHQQgAAEIQAAC9yXQfscjbgR086BRx/Ib7S2d9Cvjlp/XlWfuTfFXjeqvqlv1pz5cX+l8XzlnjO5b1Z3V0HlD5145b0vndbd02fOqdT6n1n6Obm86rzw8b8vP9Vs69/P5nrpeM7xy3byvtetUN/K1731pvqVzP+lfMarOqM8c11p5VU/SxN6WrsrNMXkd9cm+rCEAAQhAAALvIrD0jkf1C68TqzQrB6zycyyvV/yPaqvaVSzqjOLqYbYv3ep4pm/2ymv1VsU7sUojz08Yq/NVsTjrKL6HQ+VVxaq6I12nj5yb1/Ko4lVM+jNG+WsMT8017qlzJHdPPXIgAAEIQAACTyDw18/Pzz9PaJQe702Av4299/Xpdsd17JJCBwEIQAACEIDAKoGldzxWzdFDAAIQgAAEIAABCEAAAhAIAu3PeIALAiKgvxXXWiP/vEQkGCEAAQhAAAIQgAAEMgHe8chEWO8iwEPHLmwkQQACEIAABCAAga8hwGc8vuZSc1AIQAACEIAABCAAAQhcR4B3PK5jT2UIQAACEIAABCAAAQh8DQEePL7mUnNQCEAAAhCAAAQgAAEIXEeAB48T2ceHrkcfvD6xDFYQgAAEIAABCEAAAhB4HIGP/69a6UHgLh9+fnc/qjd6ZWYuWZ/3Rz7EIQABCEAAAhCAAAQgsEWAdzy26CzuxU36k2/U80NHHL+KLWJBDgEIQAACEIAABCAAAf4/Ht/yGpg9EPkDhrSKxajYt/DinBCAAAQgAAEIQAAC5xJ4zD+10k2wjj+6EXbdSCOPzuh+oa88O5rIdZ3P3VNxj3lujnfOsKJx/5irnxUPtBCAAAQgAAEIQAACEMgEHvFPraqb306s0mQAW+sqv4ptedxlL/r2r9yXHjj8fJprL+ewhgAEIAABCEAAAhCAQJfA7R88dPMbB4obYL8J9j2fZ10Xhuu2/Hyv6st9fO69q0ePufbV83yGqKdeYk/7ir26H/whAAEIQAACEIAABD6bwGP+qZXfAPs8Xx7fi7luoLOuu85+3by76Lx/9SQmMfq+4tLFmDW+xxwCEIAABCAAAQhAAAJdArd/x6N7EHR9Av6woSx/6Ih91/ie9IwQgAAEIAABCEAAAhBYIcCDxwqtL9D6A4fPv+DoHBECEIAABCAAAQhA4IUEHvPg4X/rHnN9ZTZZl/dX19lvVHfVd6bPdWf60b767fp1daN6xCEAAQhAAAIQgAAEIFAR+Ovn5+efauNOMb8Z9r7y38iPdJGTte4zmo/8sldXF3UqbdfvTucYMSMOAQhAAAIQgAAEIACBisAj3vHIN+ZxkE6s0lQQRrEqv4qN8qt4Jz9r8rry3YpV+UdiW7XYgwAEIAABCEAAAhCAQEXgEe94VI1/W0zvlFQPDN/GgvNCAAIQgAAEIAABCDyPwGP+c7rPQ/vajvUgMqrCA8qIDHEIQAACEIAABCAAgSsI8OBxBfVJzdFDBQ8TE3BsQwACEIAABCAAAQjclgAPHre9NH82lh868vpPNSsIQAACEIAABCAAAQjciwCf8bjX9aAbCEAAAhCAAAQgAAEIfCSBR/xXrT6SPIeCAAQgAAEIQAACEIDAFxHgweOLLjZHhQAEIAABCEAAAhCAwFUEePC4ijx1/0UgPlQ/+mD9v8QEIAABCEAAAhCAAAQeRYAPlz/qctFsJqAHFT5sn8nsX4upHGArEr0Rfj1OqCAAAQhA4PsI8ODxfdf8tifmBve2l4bGIAABCEAAAhCAwGEC/FOrwwgxgMBnEX5Ow84AAAXISURBVIgHQB4C919T+O1nRyYEIAABCHw2gce849H95wsznfbj5kBzv8R+wzXbjzxpsp/7ZJ3X83yPd+fKlz7XVXym0/7sHK/wU215j84Q+67t6iIva+WTz9vpQZpqlK/2tupKE6PyXK+Y63w/50mvM7k278nTNYqtjPJVzqv9VC/XqeKKqbcYt/KkD03MXZv35OkaxVZG+SrnXX6zutoXi+hP86M96qyMEIAABCDwfQQe8Y6Hfgn65TkSC58q3/1H81Fejuf1yO9IvKpxJBa95Py8rjSjWBWv/ELX+ZNz81oeVbyKhX4Ul9fKWHlVsVx3pKlqj7Qe11yj++RYXrt2Nq9yq9jMR/tVbhULvcd9Lq/RONJ6XHON7pVjee3a2bzKrWIzH+1XuUdi4ev5mmtUXUYIQAACEIBAl8DtHzz0Sy7+ls2/4oDay3PpBMF1immUVqPiMSrmY8RHftLJY6TT/pHRvbfqdnXeS8dPGo2R77W6fqFzD8/zuXtv6bd0vufe3sOWd87xtXtnj7ynvIiP9qqewjf+eI68tKc8xatxq79KX8W8h3f6+Tnh998r070eXZ2cnbfPtc8IAQhAAAIQWCFw+wcPHcZ/YUYs3+xI578cpfGYdPLwdZ7rxsbHrNHaa/hc+68avZbPcz3f8/le3d7rkeutrr13n2cf3/N51sV6tl/ljGLu5XPXV/Eq5q87zd1nz9zr+HyPV+S4h89f6VfVqWJi5uPevpTndXyu/dXRPXy+6iO9e8RcX9rXmHWKM0IAAhCAAAReSeD2n/GIX5Bx4xB/NAqI//JUrDvOcnOtru9ddWed51XX42xu3fPOXgerfa3UlbbqQXur9d+tP7vPrp+/DuH37qtOPQhAAAIQgMA+Ard/8Ihj5RsL3ZzEmPf2YRhnZX/VHmd8/s6IyTuux6fQ9dfRFrcR60/hsPcc8NtLjjwIQAACEIDAdQRu/+ChGwy/AYu54hmd38S5xvNzzhnrUd3s3dXlvNF6xe8MBmLqXnuux+g8s/i7zzvrp9p3NtW+GPqen8vjZ8+9TtXHnnqz8656zvyqvv1cq/VW9F6n6mPFS9rZeaXrjKP+co2RrlMDDQQgAAEIQGAvgb9+fn7+2Zv8rrzRL/jql2nVk+vk5bEqR7pqL2LK39JJI48VrXK2xq7fSOf9SeOxqF3FFcu9ee5IEzmu8xpbflu67Dmq7XWl8Viuv7qWZ87zGq5RfBbLfrHOubGWT56HXntbXtobaVVzVSf9bOzUdY36mcWqujk3M5Nn1m15aU+5WmuUl9ZdXdZnn7yvtcas79SVJnJHc/kzQgACEIAABLoEHvHh8vyLMw53JNaBU/lv5WV9Xlc9V5qtGnkv5+e19FW8ikk/G6vcKhY+OZ7Xs1q+n3PzWtoqXsWkP2usalSxqOdxn6uXKqa9I2P2zesV7yq3inU9q9wqFn4e97lqVTHtHRmzb16veFe5VazrWeUeiXXrooMABCAAAQh0CTziHY/uYa7Q+d8G7ql/ND/XPNsv+3fXd+mj2++n67gex64w/I7xIxsCEIAABCAQBB7xjgeXqkdAN0c9NSoIQAACEIAABCAAAQi8j8DtP1z+PhSvrzR6MKj+OUSnm7P9OjXRQAACEIAABCAAAQhAYA8B3vHYQ+3EnL0PHaMWzvYb1SEOAQhAAAIQgAAEIACBFQJ8xmOFFloIQAACEIAABCAAAQhAYBcB3vHYhY0kCEAAAhCAAAQgAAEIQGCFAA8eK7TQQgACEIAABCAAAQhAAAK7CPDgsQsbSRCAAAQgAAEIQAACEIDACgEePFZooYUABCAAAQhAAAIQgAAEdhHgwWMXNpIgAAEIQAACEIAABCAAgRUCPHis0EILAQhAAAIQgAAEIAABCOwiwIPHLmwkQQACEIAABCAAAQhAAAIrBHjwWKGFFgIQgAAEIAABCEAAAhDYRYAHj13YSIIABCAAAQhAAAIQgAAEVgj8L9Ro3kQ3WDvNAAAAAElFTkSuQmCC" class=""></p></li>
+<li rel="2"><p>得到如图的文件目录结构  <img longdesc="./1510733161853.png" alt="" title="" type="image/png" src="data:image/png;base64,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" class="" style="margin: auto; display: block; text-align: center;"></p></li>
+<li rel="3"><p>scrapy框架文件解析：</p>
+
+<ul>
+<li><strong><code>city_58/</code></strong>：该项目的python模块。之后您将在此加入代码</li>
+<li><strong><code>city_58/spiders/</code></strong>：放置spider代码的目录，在命令行使用“scrapy genspider + 爬虫名”生成的 -  - spider文件将会被存放在此目录下</li>
+<li><strong><code>city_58/items.py</code></strong>：项目中的item文件</li>
+<li><strong><code>city_58/pipelines.py</code></strong>：项目中的pipelines文件</li>
+<li><strong><code>city_58/settings.py</code></strong>：项目的设置文件</li>
+<li><strong><code>scrapy.cfg</code></strong>：项目的配置文件，一般不需要修改，也不能删除</li></ul></li>
+<li rel="3"><p>在cmd中切换到city_58文件中，输入“scrapy genspider spider_city_58 58.com”，在spider下面生成spider_city_58文件，代码如下：</p></li>
+</ol>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="hljs python"><div class="hljs-line"><span class="hljs-comment"># -*- coding: utf-8 -*-</span>
+</div><div class="hljs-line"><span class="hljs-keyword">import</span> scrapy
+</div><div class="hljs-line">
+</div><div class="hljs-line"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">SpiderCity58Spider</span><span class="hljs-params">(scrapy.Spider)</span>:</span>
+</div><div class="hljs-line">    name = <span class="hljs-string">'spider_city_58'</span>    <span class="hljs-comment">#必不可少的属性，需要利用它去决定启动哪个爬虫</span>
+</div><div class="hljs-line">    allowed_domains = [<span class="hljs-string">'58.com'</span>]   
+</div><div class="hljs-line">    start_urls = [<span class="hljs-string">'http://58.com/'</span>]   <span class="hljs-comment">#从start_urls中启动链接 </span>
+</div><div class="hljs-line">
+</div><div class="hljs-line">    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">parse</span><span class="hljs-params">(self, response)</span>:</span>
+</div><div class="hljs-line">        <span class="hljs-keyword">pass</span>
+</div><div class="hljs-line">
+</div></code></pre>
+
+<blockquote>
+  <p><strong>Scrapy的基本方法和属性：</strong></p>
+  
+  <ul><li>爬虫名称：name属性</li>
+  <li>启动方法：start_requests（），或者直接使用start_urls启动</li>
+  <li>默认解析器方法：parse（）</li>
+  <li>启动链接列表：start_urls属性</li>
+  </ul>
+  
+  <p>我们使用Scrapy的启动命令的时候，需要知道它的name属性，利用name属性去决定启动那个爬虫。如本例中爬虫名字是“spider_city_58”，则可以在命令行中使用：<code>scrapy crawl taobao</code> 启动这个爬虫</p>
+  
+  <p>爬虫默认首先从start_urls里面读取链接，然后自动调用start_request函数（或者你也可以自己定义start_request函数），此函数请求的结果自动调用默认解析器parse，也就是调用parse处理返回来的response</p>
+</blockquote>
+
+<ol start="4"><li rel="4">启动Scrapy框架 <br>
+为了方便知道请求到达了默认解析器parse，可以在解析器中输出一句话“我进入了解析器”</li>
+</ol>
+
+<pre class="prettyprint hljs-dark"><code class="hljs python"><div class="hljs-line"><span class="hljs-comment"># -*- coding: utf-8 -*-</span>
+</div><div class="hljs-line"><span class="hljs-keyword">import</span> scrapy
+</div><div class="hljs-line">
+</div><div class="hljs-line">
+</div><div class="hljs-line"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">SpiderCity58Spider</span><span class="hljs-params">(scrapy.Spider)</span>:</span>
+</div><div class="hljs-line">    name = <span class="hljs-string">'spider_city_58'</span>
+</div><div class="hljs-line">    allowed_domains = [<span class="hljs-string">'58.com'</span>]
+</div><div class="hljs-line">    start_urls = [<span class="hljs-string">'http://58.com/'</span>]
+</div><div class="hljs-line">
+</div><div class="hljs-line">    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">parse</span><span class="hljs-params">(self, response)</span>:</span>
+</div><div class="hljs-line">        print(<span class="hljs-string">'我进入了解析器'</span>)
+</div></code></pre>
+
+<p><strong><code>启动方法：</code></strong> <br>
+<strong>第一种方法：</strong>打开命令行，切换到项目目录下，执行<strong><code>Scrapy crawl taobao</code></strong>。</p>
+
+<p><strong>第二种方法：</strong>在项目中建立一个main.py文件，然后运行该文件即可。</p>
+
+<pre class="prettyprint hljs-dark"><code class="hljs swift"><div class="hljs-line">from scrapy <span class="hljs-keyword">import</span> cmdline
+</div><div class="hljs-line">cmdline.execute(<span class="hljs-string">"scrapy crawl spider_city_58"</span>.<span class="hljs-built_in">split</span>())
+</div></code></pre>
+
+<h3 id="课后作业">课后作业：</h3>
+
+<ul><li>利用Scrapy框架自行设计一个爬虫</li>
+</ul>
+
+
+
+<h3 id="补充资料">补充资料</h3>
+
+
+
+<h4 id="scrapy常用命令行命令">Scrapy常用命令行命令</h4>
+
+<p>Scrapy提供了两种类型的命令，分别为全局命令和项目命令</p>
+
+<p><code>项目命令</code>必须在Scrapy项目中运行，<code>全局命令</code>则不需要。因此，<code>运行相关的项目命令时，必须把当前命令行的路径切换到对应的项目下</code></p>
+
+<table>
+<thead>
+<tr>
+  <th align="center">全局命令：</th>
+  <th align="center">全局命令：</th>
+  <th align="center"></th>
+  <th align="center">项目命令</th>
+  <th align="center">项目命令</th>
+</tr>
+</thead>
+<tbody><tr>
+  <td align="center">startproject</td>
+  <td align="center">shell</td>
+  <td align="center"></td>
+  <td align="center">crawl</td>
+  <td align="center">bench</td>
+</tr>
+<tr>
+  <td align="center">genspider</td>
+  <td align="center">fetch</td>
+  <td align="center"></td>
+  <td align="center">check</td>
+  <td align="center">list</td>
+</tr>
+<tr>
+  <td align="center">settings</td>
+  <td align="center">view</td>
+  <td align="center"></td>
+  <td align="center">parse</td>
+  <td align="center">edit</td>
+</tr>
+<tr>
+  <td align="center">runspider</td>
+  <td align="center">version</td>
+  <td align="center"></td>
+  <td align="center"></td>
+  <td align="center"></td>
+</tr>
+</tbody></table>
+
+
+<p><code>查看所有命令</code></p>
+
+<blockquote>
+  <p>&gt;&gt;&gt;scrapy -h</p>
+</blockquote>
+
+<p><code>查看帮助信息</code></p>
+
+<blockquote>
+  <p>&gt;&gt;&gt;scapy –help</p>
+</blockquote>
+
+<p><code>查看版本信息</code></p>
+
+<blockquote>
+  <p>&gt;&gt;&gt;scrapy version <br>
+  Scrapy 1.1.2</p>
+  
+  <p>&gt;&gt;&gt;scrapy version -v <br>
+  Scrapy    : 1.4.0 <br>
+  lxml      : 3.8.0.0 <br>
+  libxml2   : 2.9.4 <br>
+  cssselect : 1.0.1 <br>
+  parsel    : 1.2.0 <br>
+  w3lib     : 1.18.0 <br>
+  Twisted   : 17.9.0 <br>
+  Python    : 3.6.2 |Anaconda custom (64-bit)| (default, Sep 19 2017, 08:03:39) [MSC v.1900 64 bit (AMD64)] <br>
+  pyOpenSSL : 17.2.0 (OpenSSL 1.0.2l  25 May 2017) <br>
+  Platform  : Windows-8.1-6.3.9600-SP0</p>
+</blockquote>
+
+<p><code>startproject命令</code>：新建一个项目，后面跟的是项目名字</p>
+
+<blockquote>
+  <p>&gt;&gt;&gt;scrapy startproject spider_name</p>
+</blockquote>
+
+<p><code>genspider命令</code>：  <br>
+生成一个spider文件，一个工程中可以存在多个spider, 但是名字必须唯一；  <br>
+爬虫名字后面加上限制的主域名，也就是限制爬虫只爬取该域名页面下的数据；  <br>
+针对某个爬虫项目生成spider文件时，需要将命令行当前工作目录切换到对应的爬虫项目路径下</p>
+
+<blockquote>
+  <p>&gt;&gt;&gt;scrapy genspider name domain <br>
+  #例如: <br>
+  &gt;&gt;&gt;scrapy genspider taobao taobao.com  <br>
+  #指定了新生成的爬虫名字是“taobao”，限制爬取的主域名是“taobao.com”</p>
+</blockquote>
+
+<p><code>查看当前项目内有多少爬虫</code></p>
+
+<blockquote>
+  <p>&gt;&gt;&gt;scrapy list</p>
+</blockquote>
+
+<p><code>使用浏览器打开网页</code></p>
+
+<blockquote>
+  <p>&gt;&gt;&gt;scrapy view <a href="http://www.baidu.com" target="_blank">http://www.baidu.com</a></p>
+</blockquote>
+
+<p><code>shell命令</code>：进入scrapy交互环境，方便实时验证结果</p>
+
+<blockquote>
+  <p>#进入该url的交互环境  <br>
+  &gt;&gt;&gt; scrapy shell <a href="http://www.dmoz.org/Computers/Programming/Languages/Python/Books/" target="_blank">http://www.dmoz.org/Computers/Programming/Languages/Python/Books/</a></p>
+  
+  <p># 之后便进入交互环境  <br>
+  # 我们主要对这里面的response（也就是爬虫的响应文件）进行操作, 例如:  <br>
+  &gt;&gt;&gt; response.xpath() #括号里直接加xpath路径</p>
+</blockquote>
+
+<p><code>runspider命令</code>：用于直接运行创建的爬虫, 并不会运行整个项目</p>
+
+<blockquote>
+  <p>&gt;&gt;&gt;scrapy runspider 爬虫名称</p>
+</blockquote>
+
+<p><code>fetch命令</code>：使用Scrapy下载器下载给定的URL，并将内容写入标准输出。</p>
+
+<blockquote>
+  <p>&gt;&gt;&gt;scrapy fetch </p>
+</blockquote>
+
+<p><code>settings</code>：获取Scrapy设置的值。 如果在项目中使用，它将显示项目设置值，否则将显示该设置的默认Scrapy值。</p>
+
+<blockquote>
+  <p>&gt;&gt;&gt;scrapy settings [options]</p>
+</blockquote>
+
+<p><code>parse命令</code>：获取给定的URL并使用处理它的爬虫解析它，使用通过–callback选项传递的方法，或者parse如果没有给出。</p>
+
+<blockquote>
+  <p>&gt;&gt;&gt;scrapy parse  [options]</p>
+</blockquote>
+
+
+
+<h3 id="scrapy项目文件的结构及用途">scrapy项目文件的结构及用途</h3>
+
+<p>可以看到，在city_58项目文件夹下有city_58文件夹和scrapy.cfg文件，其中scrapy.cfg文件中主要包含的是项目的相关设置。而在scrapy文件夹下我们可以看到：</p>
+
+<p><strong><code>Spiders文件夹</code></strong>：我们可以在Spiders文件夹下编写我们的爬虫文件，里面主要是用于分析response并提取返回的item或者是下一个URL信息，每个Spider负责处理特定的网站或一些网站。</p>
+
+<p><strong><code>__init__.py</code></strong>:项目的初始化文件。</p>
+
+<p><strong><code>items.py</code></strong>：定义我们所要爬取的信息的相关属性。Item对象是种容器，用来保存获取到的数据。</p>
+
+<p><strong><code>middlewares.py</code></strong>:Spider中间件，在这个文件里我们可以定义相关的方法，用以处理蜘蛛的响应输入和请求输出。</p>
+
+<p><strong><code>pipelines.py</code></strong>:在item被Spider收集之后，就会将数据放入到item pipelines中，在这个组件是一个独立的类，他们接收到item并通过它执行一些行为，同时也会决定item是否能留在pipeline，或者被丢弃。</p>
+
+<p><strong><code>settings.py</code></strong>:提供了scrapy组件的方法，通过在此文件中的设置可以控制包括核心、插件、pipeline以及Spider组件。</p>
+
+
+
+<h4 id="我们来具体介绍一下我们在今后用的到的文件的基本用途"><strong><code>我们来具体介绍一下我们在今后用的到的文件的基本用途：</code></strong></h4>
+
+<h4 id="itemspy">items.py</h4>
+
+<p>双击打开这个文件,看一下都初始化了什么东西</p>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="hljs python"><div class="hljs-line"><span class="hljs-comment"># -*- coding: urf-8 -*-</span>
+</div><div class="hljs-line"><span class="hljs-comment"># Define here the models for your scrapyed items</span>
+</div><div class="hljs-line"><span class="hljs-comment">#</span>
+</div><div class="hljs-line"><span class="hljs-comment"># See documentation in</span>
+</div><div class="hljs-line"><span class="hljs-comment"># http://doc.scrapy.org/en/latest/topics/items.html</span>
+</div><div class="hljs-line">
+</div><div class="hljs-line"><span class="hljs-keyword">import</span> scrapy
+</div><div class="hljs-line">
+</div><div class="hljs-line"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TaoBaoItem</span><span class="hljs-params">(scrapy.Item)</span>:</span>
+</div><div class="hljs-line">    <span class="hljs-comment"># define the fields for your item here like:</span>
+</div><div class="hljs-line">    <span class="hljs-comment"># </span>
+</div><div class="hljs-line">    <span class="hljs-comment"># name = scrapy.Filed()</span>
+</div><div class="hljs-line">    <span class="hljs-keyword">pass</span>
+</div></code></pre>
+
+<p>通过里面的注释可见，这个文件的作用是定义我们要爬取信息的标准格式，打个比方说，如果我们要爬取一批人的个人信息，包括姓名，性别，生日，那么我们可以这样来书写这个文件</p>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="hljs haskell"><div class="hljs-line"><span class="hljs-keyword">import</span> scrapy
+</div><div class="hljs-line"><span class="hljs-class">
+</span></div><div class="hljs-line"><span class="hljs-keyword">class</span> <span class="hljs-type">TaoBaoItem</span>(<span class="hljs-title">scrapy</span>.<span class="hljs-type">Item</span>):
+</div><div class="hljs-line">   name = scrapy.<span class="hljs-type">Filed</span>()
+</div><div class="hljs-line">   sex = scrapy.<span class="hljs-type">Filed</span>()
+</div><div class="hljs-line">   birthday = scrapy.<span class="hljs-type">Filed</span>()
+</div></code></pre>
+
+<p>易见本文件只是定义了一个类，至于什么时候实例化它，怎么保存它，请继续了解下面的内容。</p>
+
+
+
+<h4 id="settingspy">settings.py</h4>
+
+<p>如其名，这是本项目的配置文件，里面注释着很多常用的配置项，我们通过在其它文件中引入本文件的方式来使用这些配置项。  <br>
+当然，我们可以把这些注释都删掉，等需要开启哪个功能的时候再另行编辑</p>
+
+<p>我们此处先看看默认打开的配置项吧</p>
+
+<pre class="prettyprint hljs-dark"><code class="hljs ini"><div class="hljs-line"><span class="hljs-attr">BOT_NAME</span> = <span class="hljs-string">'taobao'</span>
+</div><div class="hljs-line"><span class="hljs-attr">SPIDER_MODULES</span> = [<span class="hljs-string">'taobao.spiders'</span>]
+</div><div class="hljs-line"><span class="hljs-attr">NEWSPIDER_MODULE</span> = <span class="hljs-string">'taobao.spider'</span>
+</div><div class="hljs-line"><span class="hljs-comment"># Obey robots.txt rules</span>
+</div><div class="hljs-line"><span class="hljs-attr">ROBORSTXT_OBEY</span> = <span class="hljs-literal">True</span>
+</div></code></pre>
+
+<p>因为我们写的是定向爬虫，前面三个按默认即可，我们不去管他。看第四项，注释里说这个配置项的意思是遵守robots.txt，如果不遵守的话可以设置为False</p>
+
+<h4 id="pipelinespy">pipelines.py</h4>
+
+<p>双击打开这个文件，看看都初始化了什么东西</p>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="hljs python"><div class="hljs-line"><span class="hljs-comment"># -*- coding: utf-8 -*-</span>
+</div><div class="hljs-line">
+</div><div class="hljs-line"><span class="hljs-comment"># Define your item pipelines here</span>
+</div><div class="hljs-line"><span class="hljs-comment"># </span>
+</div><div class="hljs-line"><span class="hljs-comment"># Don't forget to add your pipeline to the ITEM_PIPELINES setting</span>
+</div><div class="hljs-line"><span class="hljs-comment"># See: http://doc.scrapy.org/en/latest/topics/item-pipeline.html</span>
+</div><div class="hljs-line">
+</div><div class="hljs-line"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TaobaoPipeline</span><span class="hljs-params">(object)</span>:</span>
+</div><div class="hljs-line">    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">process_item</span><span class="hljs-params">(self, item, spider)</span>:</span>
+</div><div class="hljs-line">        <span class="hljs-keyword">return</span> item
+</div></code></pre>
+
+<blockquote>
+  <p>注释提醒我们要启用Pipeline的话必须要在settings.py里配置一下ITEM_PIPELINES，配置好后，我们的setting.py如下：</p>
+</blockquote>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="hljs autoit"><div class="hljs-line"><span class="hljs-meta"># -*- coding: utf-8 -*-</span>
+</div><div class="hljs-line">
+</div><div class="hljs-line">BOT_NAME = <span class="hljs-string">'taobao'</span>
+</div><div class="hljs-line">SPIDER_MODULES = [<span class="hljs-string">'taobao.spiders'</span>]
+</div><div class="hljs-line">NEWSPIDER_MODULE = <span class="hljs-string">'taobao.spider'</span>
+</div><div class="hljs-line">
+</div><div class="hljs-line">ROBORSTXT_OBEY = <span class="hljs-literal">True</span>
+</div><div class="hljs-line">
+</div><div class="hljs-line">ITEM_PIPELINES = {
+</div><div class="hljs-line">    <span class="hljs-string">'taobao.pipelines.TaobaoPipeline'</span>: <span class="hljs-number">300</span>,
+</div><div class="hljs-line">}
+</div></code></pre>
+
+<blockquote>
+  <p>此处的300表示优先级，数字越小优先级越高，代表这个Pipeline会越优先被执行。因为本项目只用到这一个pipeline，所以随意取0-1000中的一个数值即可。</p>
+</blockquote>
+
+<p>再回到pipelines.py这个文件，这个文件到底有什么用呢？</p>
+
+<ul><li>对爬取到的数据(Item)进行处理，比如存入数据库 </li>
+<li>爬虫结束时产生事件，比如发送一封邮件</li>
+</ul>
+
+<p>此处只是介绍一下，具体的操作要看后续教程。</p>
+
+<h4 id="爬虫">爬虫</h4>
+
+<p>以上为默认生成的项目结构，而爬虫文件我们需要自己写。</p>
+
+<p>在默认生成的spiders目录下新建Taobao_spider.py,我们的爬虫就写在这里面。下面为一个简单的下载网页源代码的爬虫。</p>
+
+<pre class="prettyprint hljs-dark"><code class="hljs python"><div class="hljs-line"><span class="hljs-keyword">import</span> scrapy
+</div><div class="hljs-line">
+</div><div class="hljs-line"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TaobaoSpider</span><span class="hljs-params">(scrapy.Spider)</span>:</span>
+</div><div class="hljs-line">    name = <span class="hljs-string">"taobao"</span>  <span class="hljs-comment"># 爬虫的名字，执行时使用</span>
+</div><div class="hljs-line">    start_urls = [
+</div><div class="hljs-line">        <span class="hljs-string">'https://s.taobao.com/search?q=%E8%BF%9E%E8%A1%A3%E8%A3%99&amp;imgfile=&amp;js=1&amp;stats_click=search_radio_all%3A1'</span>
+</div><div class="hljs-line">        <span class="hljs-string">'&amp;initiative_id=staobaoz_20171101&amp;ie=utf8'</span>
+</div><div class="hljs-line">    ]
+</div><div class="hljs-line">    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">parse</span><span class="hljs-params">(self, response)</span>:</span>  <span class="hljs-comment"># 真正的爬虫方法</span>
+</div><div class="hljs-line">        html = response.body  <span class="hljs-comment"># response是获取到的来自网站的返回</span>
+</div><div class="hljs-line">        <span class="hljs-comment"># 以下四行将html存入文件</span>
+</div><div class="hljs-line">        filename = <span class="hljs-string">"index.html"</span>
+</div><div class="hljs-line">        file = open(filename, <span class="hljs-string">"w"</span>)
+</div><div class="hljs-line">        file.write(html)
+</div><div class="hljs-line">        file.close()
+</div></code></pre>
+
+<p>需要说明的是：这个类不是随心所欲来写的，name，allowed_domains，start_urls，都是类似于“重载”的值。也就是说，scrapy内部会检测这些变量的值，变量名不可以起成其它的名字，类似的变量之后还会有介绍。至于parse方法，就是重载的父类的方法，我们爬虫的主体一般就写在这里面</p>
+
+
+
+<h3 id="敲黑板">敲黑板</h3>
+
+<ul><li>有能力的同学可以尝试去Scrapy框架官网查看<a href="https://doc.scrapy.org/en/latest/" target="_blank">英文文档</a>，解锁更多关于Scrapy框架最新的使用和操作方法</li>
+<li>老师上课说的大神必备：<a href="http://blog.csdn.net/wangxiaohong123/article/details/6592141" target="_blank">windows 命令行基本操作命令介绍</a></li>
+</ul></div></body></html>
+
+<p align="center">
+	<a href="https://class.pkbigdata.com/#/classDetail/classIntroduce/17" target="_blank" style="color:darkblue">Python爬虫（入门+进阶）&nbsp &nbsp  造数科技 &nbsp 主讲</a><br><br>
+	<a href="http://class.pkbigdata.com" target="_blank" style="color:darkblue">更多数据科学课程，上DC学院</a><br><br><br>
+	<img longdesc="./屏幕快照 2017-06-20 下午9.50.07.png" alt="Alt text" title="" type="image/png" class="" width="200" src="http://a2.qpic.cn/psb?/V11Gjour0xUbvS/tTU8X69B5.PR.qIkcsMZwAGzGM1v9V9cfxsRWxjj7SE!/b/dGwBAAAAAAAA&bo=rgGuAQAAAAARBzA!&rf=viewer_4"><br>
+	关注DC，获取更多学习资源
+</p>
